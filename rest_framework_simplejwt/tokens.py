@@ -200,15 +200,15 @@ class BlacklistMixin:
             exp = self.payload['exp']
 
             # Ensure outstanding token exists with given jti
-            token, _ = OutstandingToken.objects.get_or_create(
+            token, _ = OutstandingToken.objects.create(
                 jti=jti,
-                defaults={
-                    'token': str(self),
-                    'expires_at': datetime_from_epoch(exp),
-                },
+                # defaults={
+                token=str(self),
+                expires_at=datetime_from_epoch(exp),
+                # },
             )
 
-            return BlacklistedToken.objects.get_or_create(token=token)
+            return BlacklistedToken.objects.create(token=token)
 
         @classmethod
         def for_user(cls, user):

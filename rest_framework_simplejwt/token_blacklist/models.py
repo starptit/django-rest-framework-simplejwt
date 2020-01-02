@@ -1,15 +1,17 @@
 from django.conf import settings
 from django.db import models
+from mongoengine import Document, fields, CASCADE
+from django_mongoengine.mongo_auth.models import AbstractUser
 
 
-class OutstandingToken(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+class OutstandingToken(Document):
+    user = fields.ReferenceField(AbstractUser, reverse_delete_rule=CASCADE, null=True, blank=True)
 
-    jti = models.CharField(unique=True, max_length=255)
-    token = models.TextField()
+    jti = fields.StringField(unique=True, max_length=255)
+    token = fields.StringField()
 
-    created_at = models.DateTimeField(null=True, blank=True)
-    expires_at = models.DateTimeField()
+    created_at = fields.DateTimeField(null=True, blank=True)
+    expires_at = fields.DateTimeField()
 
     class Meta:
         # Work around for a bug in Django:
@@ -27,10 +29,10 @@ class OutstandingToken(models.Model):
         )
 
 
-class BlacklistedToken(models.Model):
-    token = models.OneToOneField(OutstandingToken, on_delete=models.CASCADE)
+class BlacklistedToken(Document):
+    token = fields.ReferenceField(OutstandingToken, reverse_delete_rule=CASCADE)
 
-    blacklisted_at = models.DateTimeField(auto_now_add=True)
+    blacklisted_at = fields.DateTimeField(auto_now_add=True)
 
     class Meta:
         # Work around for a bug in Django:

@@ -56,6 +56,8 @@ setup(
         'django',
         'djangorestframework',
         'pyjwt',
+        'django-mongoengine',
+        'mongoengine'
     ],
     python_requires='>=3.6,<3.9',
     extras_require=extras_require,
